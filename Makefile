@@ -56,7 +56,7 @@ valgrind:$(TARGET) $(SRCS) $(OBJS)
 
 #create directory if needed
 obj/$(OBJ_DIR):
-	mkdir -p obj/$(OBJ_DIR)
+	mkdir -p obj/$@
 
 bin:
 	mkdir -p bin
