@@ -27,6 +27,7 @@ OBJS2=$(patsubst src/%,%,$(OBJSTEMP))
 OBJS3=$(subst /, ,$(OBJS2))
 
 OBJ_DIR=$(sort $(patsubst %.o,,$(OBJS3)))
+OBJDIRS = $(addprefix obj/,$(OBJ_DIR))
 
 INC_FLAGS := $(addprefix -Isrc/, $(OBJ_DIR))
 CXXFLAGS=$(CXXFLAG) -I. -Isrc $(INC_FLAGS)
@@ -40,7 +41,7 @@ $(TARGET): $(OBJS) $(SRCS) |bin
 	$(CXX) $(CXXFLAGS) -o bin/$(TARGET) $(OBJS)
 
 
-obj/%.o: src/%.cpp | obj/$(OBJ_DIR)
+obj/%.o: src/%.cpp | $(OBJDIRS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
@@ -55,8 +56,8 @@ valgrind:$(TARGET) $(SRCS) $(OBJS)
 	valgrind --leak-check=full ./bin/$(TARGET)
 
 #create directory if needed
-obj/$(OBJ_DIR):
-	mkdir -p obj/$@
+$(OBJDIRS):
+	mkdir -p $@
 
 bin:
 	mkdir -p bin
