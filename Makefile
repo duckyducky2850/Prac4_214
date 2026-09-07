@@ -1,66 +1,19 @@
-
-# Target executable, default name
-TARGET= taskforce
-
-# Compiler flags
-CXXFLAG = -std=c++11 -Wall -Werror 
-
-##DO NOT TOUCH----------------------------------------------------------------------
-
-# Compiler
 CXX = g++
 
-# all method names
-.PHONY: all clean run valgrind
+CXXFLAGS = -std=c++11 -Wall -g
 
-#Don't delete .o
-.PRECIOUS: obj/%.o
+SRCS = $(wildcard *.cpp)
 
-# Source files
-SRCS=$(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
 
-# Object files
-OBJSTEMP = $(SRCS:.cpp=.o)
+taskforge: $(OBJS)
+	$(CXX) $(CXXFLAGS) -o taskforge $(OBJS)
 
-OBJS2=$(patsubst src/%,%,$(OBJSTEMP))
-
-OBJS3=$(subst /, ,$(OBJS2))
-
-OBJ_DIR=$(sort $(patsubst %.o,,$(OBJS3)))
-OBJDIRS = $(addprefix obj/,$(OBJ_DIR))
-
-INC_FLAGS := $(addprefix -Isrc/, $(OBJ_DIR))
-CXXFLAGS=$(CXXFLAG) -I. -Isrc $(INC_FLAGS)
-
-OBJS=$(patsubst src/%,obj/%,$(OBJSTEMP))
-
-all: $(TARGET) run
-
-
-$(TARGET): $(OBJS) $(SRCS) |bin
-	$(CXX) $(CXXFLAGS) -o bin/$(TARGET) $(OBJS)
-
-
-obj/%.o: src/%.cpp | $(OBJDIRS)
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-
-run: $(TARGET) $(SRCS) $(OBJS) 
-	./bin/$(TARGET)
-
 clean:
-	rm -f $(OBJS) bin/$(TARGET) 
 
-# Run valgrind
-valgrind:$(TARGET) $(SRCS) $(OBJS) 
-	valgrind --leak-check=full ./bin/$(TARGET)
+	rm -f $(OBJS) taskforge
 
-#create directory if needed
-$(OBJDIRS):
-	mkdir -p $@
-
-bin:
-	mkdir -p bin
-	
-print-%:
-	@echo $* = $($*)
+.PHONY: clean
