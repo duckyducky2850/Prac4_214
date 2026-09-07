@@ -1,11 +1,11 @@
 #include "DispatchedState.h"
-// TODO: #include "EnRouteState.h" and "ResponseTask.h" once implemented
+#include "EnRouteState.h"
+#include "ResponseTask.h"
 
 DispatchedState* DispatchedState::instance() {
     static DispatchedState instance;
     return &instance;
 }
-
-void DispatchedState::startTravel(ResponseTask* /*task*/) {
-    // TODO: task->setState(EnRouteState::instance());
+void DispatchedState::startTravel(ResponseTask* task) {
+    task->setState(EnRouteState::instance());
 }
