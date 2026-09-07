@@ -52,7 +52,7 @@ clean:
 	rm -f $(OBJS) bin/$(TARGET) 
 
 # Run valgrind
-valgrind:$(TARGET) $(SRCS) $(OBJS) 
+valgrind:bin/$(TARGET) $(SRCS) $(OBJS) 
 	valgrind --leak-check=full ./bin/$(TARGET)
 
 #create directory if needed
