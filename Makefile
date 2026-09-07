@@ -1,6 +1,6 @@
 
 # Target executable, default name
-TARGET= taskforce
+TARGET= taskforge
 
 # Compiler flags
 CXXFLAG = -std=c++11 -g -Wall -Werror 
