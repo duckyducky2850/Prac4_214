@@ -15,9 +15,14 @@ void printSeparator(const std::string& title) {
 int main() {
     // ---------------------------------------------------------------
     // Build the hierarchy: Incident -> Team -> Squad -> Task
+    //
+    // // Activity Diagram 3: "dispatch fire division and medical division"
+    // (Incident Commander lane) + fork -- both divisions built here before
+    // either one acts, matching the fork node's two parallel branches.
     // ---------------------------------------------------------------
     ResponseGroup* incident = new ResponseGroup("Building Collapse - Main St");
 
+    // // Activity Diagram 3: Fire Division branch (left lane after the fork)
     ResponseGroup* fireDivision = new ResponseGroup("Fire Division");
     ResponseGroup* engine12 = new ResponseGroup("Engine 12 Crew");
     ResponseTask* searchTask = new ResponseTask("Search Building 3", 8, 40);
@@ -26,6 +31,7 @@ int main() {
     engine12->add(ventTask);
     fireDivision->add(engine12);
 
+    // // Activity Diagram 3: Medical Division branch (right lane after the fork)
     ResponseGroup* medicalDivision = new ResponseGroup("Medical Division");
     ResponseGroup* triageB = new ResponseGroup("Triage Unit B");
     ResponseTask* casualty4 = new ResponseTask("Treat casualty #4", 9, 25);
@@ -48,6 +54,10 @@ int main() {
     }
     delete fullReportBefore;
 
+    // // Activity Diagram 1: "start travel" -> "[hazmat detected]" decision
+    // -> "Apply hazmat decorator" -> merge.
+    // // Activity Diagram 3: Fire Division branch's "[hazmat found]" decision
+    // -> "apply hazmat decorator" -> join with Medical Division.
     // A hazmat leak is discovered at the search task -> decorate it.
     // Decorators stack: hazmat AND medical support both apply here.
     engine12->remove(searchTask); // detach WITHOUT deleting (see ResponseGroup::remove)
@@ -68,8 +78,10 @@ int main() {
     // ---------------------------------------------------------------
     Iterator* beforeMove = incident->createIterator(IteratorType::FULL_SWEEP);
 
-    // Escalate casualty #4, then move it from Triage B to Engine 12
-    // (e.g. it now needs fire-crew extraction support).
+    // // Activity Diagram 1: "Arrive on scene" -> "[requires escalation]"
+    // decision -> "Escalate" -> "Resolve" (Field Crew lane). Escalate casualty
+    // #4, then move it from Triage B to Engine 12 (e.g. it now needs
+    // fire-crew extraction support).
     casualty4->startTravel();
     casualty4->arriveOnScene();
     casualty4->escalate();
@@ -93,6 +105,9 @@ int main() {
     // Scenario 2: mass-casualty triage using PriorityIterator, plus
     // state-machine validity checks (one valid path, one invalid attempt).
     // ---------------------------------------------------------------
+    // // Activity Diagram 2: "Build Priority List" (called activity, wraps
+    // the PriorityIterator constructor's collect/filter/sort) -> loop
+    // "[has next]" -> "Get next task" -> "Dispatch task".
     printSeparator("PRIORITY TRIAGE (severity >= 5, most urgent first)");
     Iterator* urgent = new PriorityIterator(incident, /*minSeverity=*/5);
     for (urgent->first(); urgent->hasNext(); ) {
@@ -114,14 +129,12 @@ int main() {
 
     incident->add(triageTask); // fold it into the hierarchy for cleanup
 
-    
+    // // Activity Diagram 3: join -> "compile incident status report" ->
+    // "reassign task to different squad" -> final node.
     // Reassign casualty #7 to Engine 12 as backup support.
     triageB->remove(casualty7); // detach before transferring ownership
     engine12->add(casualty7);
-    // ---------------------------------------------------------------
-    // Cleanup: destroying the root recursively destroys everything,
-    // including decorated tasks (their destructors delete what they wrap).
-    // ---------------------------------------------------------------
+    // cleanup
     delete incident;
 
     return 0;
