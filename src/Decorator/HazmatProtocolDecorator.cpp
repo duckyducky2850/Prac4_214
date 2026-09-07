@@ -1,19 +1,16 @@
 #include "HazmatProtocolDecorator.h"
+#include <iostream>
 
 HazmatProtocolDecorator::HazmatProtocolDecorator(IncidentComponent* component)
     : IncidentComponentDecorator(component) {}
 
 int HazmatProtocolDecorator::getSeverityScore() const {
-    // TODO: return wrapped->getSeverityScore() + <hazmat bump>;
-    return wrapped->getSeverityScore();
+    return wrapped->getSeverityScore() + 2; // hazmat raises how urgent this is
 }
-
 int HazmatProtocolDecorator::getEstimatedEffort() const {
-    // TODO: return wrapped->getEstimatedEffort() + <decontamination time>;
-    return wrapped->getEstimatedEffort();
+    return wrapped->getEstimatedEffort() + 30; // decontamination time
 }
-
 void HazmatProtocolDecorator::report() const {
     wrapped->report();
-    // TODO: print the extra hazmat line
+    std::cout << "    + Hazmat protocol active (decontamination required)\n";
 }

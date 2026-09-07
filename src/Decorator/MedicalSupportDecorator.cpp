@@ -1,14 +1,13 @@
 #include "MedicalSupportDecorator.h"
+#include <iostream>
 
 MedicalSupportDecorator::MedicalSupportDecorator(IncidentComponent* component)
     : IncidentComponentDecorator(component) {}
 
 int MedicalSupportDecorator::getEstimatedEffort() const {
-    // TODO: return wrapped->getEstimatedEffort() + <triage overhead>;
-    return wrapped->getEstimatedEffort();
+    return wrapped->getEstimatedEffort() + 15;
 }
-
 void MedicalSupportDecorator::report() const {
     wrapped->report();
-    // TODO: print the extra medical support line
+    std::cout << "    + Medical support attached (triage required)\n";
 }

@@ -1,14 +1,13 @@
 #include "MediaLiaisonDecorator.h"
+#include <iostream>
 
 MediaLiaisonDecorator::MediaLiaisonDecorator(IncidentComponent* component)
     : IncidentComponentDecorator(component) {}
 
 int MediaLiaisonDecorator::getEstimatedEffort() const {
-    // TODO: return wrapped->getEstimatedEffort() + <comms overhead>;
-    return wrapped->getEstimatedEffort();
+    return wrapped->getEstimatedEffort() + 10; // comms overhead
 }
-
 void MediaLiaisonDecorator::report() const {
     wrapped->report();
-    // TODO: print the extra media liaison line
+    std::cout << "    + Media liaison assigned (press updates required)\n";
 }

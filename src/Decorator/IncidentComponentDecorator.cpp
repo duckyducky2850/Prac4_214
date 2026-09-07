@@ -16,12 +16,10 @@ void IncidentComponentDecorator::remove(IncidentComponent* component) { wrapped-
 Iterator* IncidentComponentDecorator::createIterator(IteratorType type) { return wrapped->createIterator(type); }
 
 void IncidentComponentDecorator::collectAll(std::vector<IncidentComponent*>& out) {
-    // TODO: push `this` (so the decoration is visible to the caller), then
-    // decide how to handle `wrapped` being a group — see header note.
+    // Report ourselves (the decorated component), not the raw wrapped
+    // pointer - makes it visible that this is a decorated component in the traversal.
     out.push_back(this);
 }
-
 void IncidentComponentDecorator::collectLeaves(std::vector<IncidentComponent*>& out) {
-    // TODO: same consideration as collectAll — see header note.
     out.push_back(this);
 }
