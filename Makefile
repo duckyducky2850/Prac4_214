@@ -3,7 +3,7 @@
 TARGET= taskforce
 
 # Compiler flags
-CXXFLAG = -std=c++11 -Wall -Werror 
+CXXFLAG = -std=c++11 -g -Wall -Werror 
 
 ##DO NOT TOUCH----------------------------------------------------------------------
 
@@ -34,10 +34,10 @@ CXXFLAGS=$(CXXFLAG) -I. -Isrc $(INC_FLAGS)
 
 OBJS=$(patsubst src/%,obj/%,$(OBJSTEMP))
 
-all: $(TARGET) run
+all: bin/$(TARGET)
 
 
-$(TARGET): $(OBJS) $(SRCS) |bin
+bin/$(TARGET): $(OBJS) $(SRCS) |bin
 	$(CXX) $(CXXFLAGS) -o bin/$(TARGET) $(OBJS)
 
 
@@ -45,7 +45,7 @@ obj/%.o: src/%.cpp | $(OBJDIRS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
-run: $(TARGET) $(SRCS) $(OBJS) 
+run: bin/$(TARGET) $(SRCS) $(OBJS) 
 	./bin/$(TARGET)
 
 clean:
