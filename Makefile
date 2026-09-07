@@ -3,7 +3,7 @@
 TARGET= taskforce
 
 # Compiler flags
-CXXFLAG = -std=c++11 -Wall -Werror 
+CXXFLAG = -std=c++11 -g -Wall -Werror 
 
 ##DO NOT TOUCH----------------------------------------------------------------------
 
