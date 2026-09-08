@@ -13,4 +13,4 @@ COPY . .
 
 RUN make
 
-CMD ["./taskforge"]
+CMD ["make"]
