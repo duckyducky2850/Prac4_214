@@ -10,27 +10,14 @@ CXXFLAG = -std=c++11 -g -Wall -Werror
 # Compiler
 CXX = g++
 
-# all method names
-.PHONY: all clean run valgrind
+CXXFLAGS = -std=c++11 -Wall -g
 
-#Don't delete .o
-.PRECIOUS: obj/%.o
+SRCS = $(wildcard *.cpp)
 
-# Source files
-SRCS=$(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
 
-# Object files
-OBJSTEMP = $(SRCS:.cpp=.o)
-
-OBJS2=$(patsubst src/%,%,$(OBJSTEMP))
-
-OBJS3=$(subst /, ,$(OBJS2))
-
-OBJ_DIR=$(sort $(patsubst %.o,,$(OBJS3)))
-OBJDIRS = $(addprefix obj/,$(OBJ_DIR))
-
-INC_FLAGS := $(addprefix -Isrc/, $(OBJ_DIR))
-CXXFLAGS=$(CXXFLAG) -I. -Isrc $(INC_FLAGS)
+taskforge: $(OBJS)
+	$(CXX) $(CXXFLAGS) -o taskforge $(OBJS)
 
 OBJS=$(patsubst src/%,obj/%,$(OBJSTEMP))
 
@@ -55,12 +42,6 @@ clean:
 valgrind:bin/$(TARGET) $(SRCS) $(OBJS) 
 	valgrind --leak-check=full ./bin/$(TARGET)
 
-#create directory if needed
-$(OBJDIRS):
-	mkdir -p $@
+	rm -f $(OBJS) taskforge
 
-bin:
-	mkdir -p bin
-	
-print-%:
-	@echo $* = $($*)
+.PHONY: clean
