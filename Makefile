@@ -34,7 +34,7 @@ CXXFLAGS=$(CXXFLAG) -I. -Isrc $(INC_FLAGS)
 
 OBJS=$(patsubst src/%,obj/%,$(OBJSTEMP))
 
-all: bin/$(TARGET)
+all: bin/$(TARGET) run
 
 
 bin/$(TARGET): $(OBJS) $(SRCS) |bin
@@ -64,3 +64,6 @@ bin:
 	
 print-%:
 	@echo $* = $($*)
+
+gdb:
+	gdb ./bin/$(TARGET)
