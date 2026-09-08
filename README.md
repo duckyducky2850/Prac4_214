@@ -61,7 +61,7 @@ is nothing to leak.
 
 ```bash
 make clean \&\& make
-./taskforge
+make run
 ```
 
 ## Build and run (Docker)
@@ -76,26 +76,27 @@ To get a shell inside the container instead of running immediately:
 ```bash
 docker run -it taskforge bash
 make clean \&\& make
-./taskforge
+make run
 ```
 
 ## GDB (inside the container)
 
 ```bash
 docker run -it taskforge bash
-gdb ./taskforge
+make gdb
 (gdb) break ResponseTask::escalate
 (gdb) run
 (gdb) next
 (gdb) print this->severity
 (gdb) continue
 ```
+OR if the cpp extention is installed the run and debug menu can be used.
 
 ## Valgrind (inside the container)
 
 ```bash
 docker run -it taskforge bash
-valgrind --leak-check=full --show-leak-kinds=all ./taskforge
+make valgrind
 ```
 
 Expected: `definitely lost: 0 bytes`. *Paste the actual run's summary here
