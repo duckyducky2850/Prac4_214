@@ -1,0 +1,81 @@
+root@d38f5eaf1910:/taskforge# valgrind --leak-check=full --show-leak-kinds=all ./taskforge`
+> valgrind --leak-check=full --show-leak-kinds=all ./taskforge`
+==18== Memcheck, a memory error detector
+==18== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==18== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==18== Command: ./taskforge
+==18== 
+==18== 
+==18== HEAP SUMMARY:
+==18==     in use at exit: 0 bytes in 0 blocks
+==18==   total heap usage: 77 allocs, 77 frees, 80,335 bytes allocated
+==18== 
+==18== All heap blocks were freed -- no leaks are possible
+==18== 
+==18== For lists of detected and suppressed errors, rerun with: -s
+==18== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==19== Memcheck, a memory error detector
+==19== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==19== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==19== Command: ./taskforge ===== FULL INCIDENT REPORT (before hazmat discovery) ===== [Group] Building Collapse - Main St (worst severity 9, total effort 100 min) [Group] Fire Division (worst severity 8, total effort 60 min) [Group] Engine 12 Crew (worst severity 8, total effort 60 min) [Task] Search Building 3 (severity 8, effort 40 min, state: Dispatched) [Task] Ventilate stairwell (severity 4, effort 20 min, state: Dispatched) [Group] Medical Division (worst severity 9, total effort 40 min) [Group] Triage Unit B (worst severity 9, total effort 40 min) [Task] Treat casualty #4 (severity 9, effort 25 min, state: Dispatched) [Task] Treat casualty #7 (severity 3, effort 15 min, state: Dispatched) ===== SAME TASK AFTER STACKING DECORATORS ===== [Task] Search Building 3 (severity 8, effort 40 min, state: Dispatched) + Hazmat protocol active (decontamination required) + Medical support attached (triage required) -\> effort now 85 min, severity now 10 ===== ITERATOR CREATED BEFORE THE MOVE (snapshot, old structure) ===== - Building Collapse - Main St - Fire Division - Engine 12 Crew - Ventilate stairwell - Search Building 3 - Medical Division - Triage Unit B - Treat casualty #4 - Treat casualty #7 ===== ITERATOR CREATED AFTER THE MOVE (reflects new structure) ===== - Building Collapse - Main St - Fire Division - Engine 12 Crew - Ventilate stairwell - Search Building 3 - Treat casualty #4 - Medical Division - Triage Unit B - Treat casualty #7 ===== PRIORITY TRIAGE (severity \>= 5, most urgent first) ===== - Search Building 3 (severity 10) - Treat casualty #4 (severity 9) ===== STATE TRANSITIONS ON A FRESH TASK ===== Initial state: Dispatched [INVALID TRANSITION] "Assess trapped worker" cannot arriveOnScene() while in state Dispatched State is now: OnScene [INVALID TRANSITION] "Assess trapped worker" cannot startTravel() while in state OnScene Final state: Resolved
+==19== 
+
+===== FULL INCIDENT REPORT (before hazmat discovery) =====
+[Group] Building Collapse - Main St (worst severity 9, total effort 100 min)
+[Group] Fire Division (worst severity 8, total effort 60 min)
+[Group] Engine 12 Crew (worst severity 8, total effort 60 min)
+  [Task] Search Building 3 (severity 8, effort 40 min, state: Dispatched)
+  [Task] Ventilate stairwell (severity 4, effort 20 min, state: Dispatched)
+[Group] Medical Division (worst severity 9, total effort 40 min)
+[Group] Triage Unit B (worst severity 9, total effort 40 min)
+  [Task] Treat casualty #4 (severity 9, effort 25 min, state: Dispatched)
+  [Task] Treat casualty #7 (severity 3, effort 15 min, state: Dispatched)
+
+===== SAME TASK AFTER STACKING DECORATORS =====
+  [Task] Search Building 3 (severity 8, effort 40 min, state: Dispatched)
+    + Hazmat protocol active (decontamination required)
+    + Medical support attached (triage required)
+  -> effort now 85 min, severity now 10
+
+===== ITERATOR CREATED BEFORE THE MOVE (snapshot, old structure) =====
+  - Building Collapse - Main St
+  - Fire Division
+  - Engine 12 Crew
+  - Ventilate stairwell
+  - Search Building 3
+  - Medical Division
+  - Triage Unit B
+  - Treat casualty #4
+  - Treat casualty #7
+
+===== ITERATOR CREATED AFTER THE MOVE (reflects new structure) =====
+  - Building Collapse - Main St
+  - Fire Division
+  - Engine 12 Crew
+  - Ventilate stairwell
+  - Search Building 3
+  - Treat casualty #4
+  - Medical Division
+  - Triage Unit B
+  - Treat casualty #7
+
+===== PRIORITY TRIAGE (severity >= 5, most urgent first) =====
+  - Search Building 3 (severity 10)
+  - Treat casualty #4 (severity 9)
+
+===== STATE TRANSITIONS ON A FRESH TASK =====
+Initial state: Dispatched
+[INVALID TRANSITION] "Assess trapped worker" cannot arriveOnScene() while in state Dispatched
+State is now: OnScene
+[INVALID TRANSITION] "Assess trapped worker" cannot startTravel() while in state OnScene
+Final state: Resolved
+==19== 
+==19== HEAP SUMMARY:
+==19==     in use at exit: 0 bytes in 0 blocks
+==19==   total heap usage: 77 allocs, 77 frees, 77,263 bytes allocated
+==19== 
+==19== All heap blocks were freed -- no leaks are possible
+==19== 
+==19== For lists of detected and suppressed errors, rerun with: -s
+==19== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+root@d38f5eaf1910:/taskforge# 
