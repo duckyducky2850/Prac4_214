@@ -1,15 +1,11 @@
 #include "FullSweepIterator.h"
 
 FullSweepIterator::FullSweepIterator(IncidentComponent* root) {
-    // TODO: root->collectAll(snapshot);
-    (void)root;
+    root->collectAll(snapshot); // snapshot taken NOW, not re-checked later
 }
 
 bool FullSweepIterator::hasNext() const { return position < snapshot.size(); }
 
-IncidentComponent* FullSweepIterator::next() {
-    // TODO: return snapshot[position++];
-    return nullptr;
-}
+IncidentComponent* FullSweepIterator::next() { return snapshot[position++]; }
 
 void FullSweepIterator::first() { position = 0; }

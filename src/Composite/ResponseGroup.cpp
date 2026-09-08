@@ -1,49 +1,73 @@
 #include "ResponseGroup.h"
+#include "FullSweepIterator.h"
+#include "PriorityIterator.h"
+#include <algorithm>
+#include <iostream>
+#include <numeric>
 
 ResponseGroup::ResponseGroup(std::string name) : name(std::move(name)) {}
 
 ResponseGroup::~ResponseGroup() {
-    // TODO: delete every child (recursive teardown of the whole subtree).
+    // Ownership policy: a group owns everything inside it. Destroying a
+    // group recursively destroys the whole subtree beneath it, including
+    // any nested groups (whose own destructors then run and do the same).
+    for (IncidentComponent* child : children) {
+        delete child;
+    }
 }
 
 void ResponseGroup::add(IncidentComponent* component) {
     children.push_back(component);
 }
 
-void ResponseGroup::remove(IncidentComponent* /*component*/) {
-    // TODO: erase the matching pointer WITHOUT deleting it — this is what
-    // makes "move a task to a different squad" safe.
+void ResponseGroup::remove(IncidentComponent* component) {
+    // NOTE: remove() does NOT delete — it only detaches. This is what makes
+    // "move a task to a different squad" safe: remove() from the old
+    // group, then add() into the new one. The task is deleted exactly
+    // once, by whichever group still owns it when it's torn down.
+    children.erase(std::remove(children.begin(), children.end(), component), children.end());
 }
 
 int ResponseGroup::getSeverityScore() const {
-    // TODO: return the max severity among children
-    return 0;
+    int worst = 0;
+    for (const IncidentComponent* child : children) {
+        worst = std::max(worst, child->getSeverityScore());
+    }
+    return worst;
 }
 
 int ResponseGroup::getEstimatedEffort() const {
-    // TODO: return the sum of children's effort
-    return 0;
+    int total = 0;
+    for (const IncidentComponent* child : children) {
+        total += child->getEstimatedEffort();
+    }
+    return total;
 }
 
 std::string ResponseGroup::getName() const { return name; }
 
 void ResponseGroup::report() const {
-    // TODO: print a one-line summary of THIS group only (not children —
-    // that's the Iterator's job).
+    // Describes ONLY this group. Visiting every node in the tree is the
+    // Iterator's job (see FullSweepIterator) — report() recursing here too
+    // would print every node once per ancestor, duplicating the traversal.
+    std::cout << "[Group] " << name << " (worst severity " << getSeverityScore()
+              << ", total effort " << getEstimatedEffort() << " min)\n";
 }
 
-Iterator* ResponseGroup::createIterator(IteratorType /*type*/) {
-    // TODO: return new FullSweepIterator(this) or new PriorityIterator(this, 0)
-    return nullptr;
+Iterator* ResponseGroup::createIterator(IteratorType type) {
+    if (type == IteratorType::FULL_SWEEP) return new FullSweepIterator(this);
+    return new PriorityIterator(this, /*minSeverity=*/0);
 }
 
 void ResponseGroup::collectAll(std::vector<IncidentComponent*>& out) {
     out.push_back(this);
-    // TODO: recurse into each child via child->collectAll(out)
+    for (IncidentComponent* child : children) {
+        child->collectAll(out); // polymorphic recursion — no type checks needed
+    }
 }
 
 void ResponseGroup::collectLeaves(std::vector<IncidentComponent*>& out) {
-    // TODO: recurse into each child via child->collectLeaves(out)
-    // (a group does NOT add itself here — only leaves do)
-    (void)out;
+    for (IncidentComponent* child : children) {
+        child->collectLeaves(out); // groups don't add themselves, only leaves do
+    }
 }
